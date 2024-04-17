@@ -48,18 +48,21 @@ def search_google_scholar(query):
     return results
 
 def get_abstract(link):
-  headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'
-  }
-  paper_response = requests.get(links[0], headers=headers)
-  paper_html = paper_response.text
-  soup = BeautifulSoup(paper_html, "html.parser")
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'
+    }
+    paper_response = requests.get(link, headers=headers)
+    paper_html = paper_response.text
+    soup = BeautifulSoup(paper_html, "html.parser")
 
-  abstract = soup.find_all(class_=lambda x: x and 'abstract' in x)
-  if not abstract:
-    return None
+    abstract = soup.find_all(class_=lambda x: x and 'abstract' in x)
+  # abstract = soup.find_all(class_='abstract')
+    if not abstract:
+        return None
     
-  abstract_text = ""
-  for i in abstract:
-    abstract_text += i.text
-  return abstract_text
+    abstract_text = ""
+    for i in abstract:
+        text = i.find('p')
+        if text:
+            abstract_text += text.get_text().strip()
+    return abstract_text
