@@ -1,5 +1,5 @@
 import requests
-import bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 import re  
 
 def search_google_scholar(query):
@@ -26,17 +26,17 @@ def search_google_scholar(query):
         # URL
         link_element = result.find_all('h3')
         for link in link_element:
-          link = link.find('a')
+          link = link.find('a') if link_element else ''
           if link:
             link = link['href']
             break
-        # print(link_element)
-        # link = link_element['href'] if link_element else ''
         
         # 著者
         author_element = result.find('div', class_='gs_a')
         authors = author_element.get_text().strip() if author_element else ''
         
+        # 要素取れなかったらスキップ
+        if title == '' or link == '' or author_element == '': continue
         
         # 結果をリストに追加
         results.append({
