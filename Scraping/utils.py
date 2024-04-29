@@ -76,3 +76,90 @@ def get_abstract(link):
     return abstract_text
 
 
+# azure openai api
+from langchain.chains.summarize import load_summarize_chain
+from langchain.prompts import PromptTemplate
+from langchain.vectorstores import FAISS
+from langchain_openai import AzureChatOpenAI
+from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import FAISS
+from langchain_openai import AzureOpenAIEmbeddings
+
+def is_all_digits(text):
+    return text.isdigit()
+
+def get_pdf(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'
+    }
+    file_name = url.split("/")[-1]
+    if is_all_digits(file_name[:-4]):
+        # file_name = f"paper-{file_name}"
+        return None
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        with open('file.pdf', 'wb') as f:
+            f.write(response.content)
+        reader = PyPDFLoader('file.pdf')
+        return reader
+        # PDFの処理を続ける
+    else:
+        print(f'Failed to download PDF. Status code: {response.status_code}')
+        return None
+
+def summarize_v2(url, model="gpt-35-turbo"):
+    # loader = PyPDFLoader(f"./Scraping/track_pdfs/{file_name}")
+    loader = get_pdf(url)
+    if loader is None:
+        return None
+    
+    documents = loader.load()
+    embeddings = AzureOpenAIEmbeddings(
+        azure_deployment="text-embedding",
+        openai_api_version="2023-12-01-preview",
+    )
+    # テキストを分割
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    split_docs = text_splitter.split_documents(documents)
+    db = FAISS.from_documents(split_docs, embeddings)
+
+    prompt_template = """
+        #お願い
+        あなたはプロの要約者です。各章を関連付けて、論文の内容を簡潔に要約してください。
+
+        #ルール
+        日本語での出力
+
+        #入力
+        {text}
+        
+        #出力
+        タイトル
+        著者名
+        雑誌名
+        公開年月日
+        論文の主要なポイント
+        論文の重要性"""
+        
+    PROMPT = PromptTemplate(template=prompt_template, input_variables=["text"])
+    # OpenAI APIを使用して要約チェーンを作成
+    llm = AzureChatOpenAI(
+        openai_api_version="2023-12-01-preview",
+        azure_deployment="gpt-35-turbo",
+    )
+    chain = load_summarize_chain(llm, chain_type="map_reduce", map_prompt=PROMPT, combine_prompt=PROMPT)
+    # ベクターストアからドキュメントを取得
+    docs = db.similarity_search(query="", k=1)
+
+    # ドキュメントの要約を生成
+    summary = chain.run(docs)
+
+    return summary
+
+
+
+
+
+
