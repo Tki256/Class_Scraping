@@ -35,14 +35,22 @@ def search_google_scholar(query):
         author_element = result.find('div', class_='gs_a')
         authors = author_element.get_text().strip() if author_element else ''
         
+        # a タグからhref属性を取得
+        pdf_element = result.find('a')
+        pdf = pdf_element['href'] if pdf_element else ''
+        # PDFリンクが.pdfで終わらない場合、空文字列に置き換える
+        if not pdf.endswith('.pdf'):
+            pdf = ''
+            
         # 要素取れなかったらスキップ
-        if title == '' or link == '' or author_element == '': continue
+        if title == '' or link == '' or author_element == '' or pdf == '': continue
         
         # 結果をリストに追加
         results.append({
             'title': title,
             'authors': authors,
-            'URL': link
+            'URL': link,
+            'pdf': pdf
         })
     
     return results
@@ -66,3 +74,5 @@ def get_abstract(link):
         if text:
             abstract_text += text.get_text().strip()
     return abstract_text
+
+
