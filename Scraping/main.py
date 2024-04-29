@@ -1,6 +1,7 @@
 from utils import search_google_scholar, get_abstract, summarize_v2
 import streamlit as st
-
+from dotenv import load_dotenv
+load_dotenv()
 
 st.title("Scraping")
 # カラムレイアウトを作成
