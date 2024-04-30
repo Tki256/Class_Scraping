@@ -151,12 +151,12 @@ def summarize_v2(url, model="gpt-35-turbo"):
     )
     chain = load_summarize_chain(llm, chain_type="map_reduce", map_prompt=PROMPT, combine_prompt=PROMPT)
     # ベクターストアからドキュメントを取得
-    # docs = db.similarity_search(query="abstruct", k=2)
-    retriver = db.as_retriever(search_kwargs={"k": 4})
-    docs = retriver.get_relevant_documents("abstruct")
-    combined_doc = combine_documents(docs)
+    docs = db.similarity_search(query="abstruct", k=1)
+    # retriver = db.as_retriever(search_kwargs={"k": 4})
+    # docs = retriver.get_relevant_documents("abstruct")
+    # combined_doc = combine_documents(docs)
     # ドキュメントの要約を生成
-    summary = chain.run(combined_doc)
+    summary = chain.run(docs)
 
     return summary
 
