@@ -44,7 +44,7 @@ with st.spinner("処理中..."):
             st.markdown('### abstracts:')
             st.markdown(results['abstracts'][i])
             if st.button("翻訳", key=f"abstract{n}"):
-                st.markdown(translate_en_to_ja(results['abstracts'][i]), deepl_api_key)
+                st.markdown(translate_en_to_ja(results['abstracts'][i], deepl_api_key))
             st.markdown('---')
             n+=1
     # else:

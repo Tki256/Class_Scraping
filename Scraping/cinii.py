@@ -61,7 +61,8 @@ def get_abstract(link):
     return abstract
 
 def translate_en_to_ja(text, auth_key=None):
-    if auth_key != None:
+    if auth_key != "":
+        # print("auth_key: ", auth_key)
         translator = deepl.Translator(auth_key=auth_key)
     else:
         translator = deepl.Translator(auth_key=os.getenv('DEEPL_API_KEY'))
