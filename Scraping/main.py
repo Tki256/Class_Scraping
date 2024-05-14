@@ -37,8 +37,8 @@ with st.spinner("処理中..."):
             st.markdown(f"{results['titles'][i]} [リンク](https://cir.nii.ac.jp{results['links'][i]})")
             st.markdown('### info:')
             st.markdown(results['infos'][i])
-            if orders==10:
-                st.markdown(results['quotes'][i])
+            # if orders==10:
+            #     st.markdown(results['quotes'][i])
             st.markdown('### abstracts:')
             st.markdown(results['abstracts'][i])
             if st.button("翻訳", key=f"abstract{n}"):
