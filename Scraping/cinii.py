@@ -60,7 +60,10 @@ def get_abstract(link):
         abstract = "要約が見つかりませんでした。自分で読んでね！"
     return abstract
 
-def translate_en_to_ja(text):
-    translator = deepl.Translator(auth_key=os.getenv('DEEPL_API_KEY'))
+def translate_en_to_ja(text, auth_key=None):
+    if auth_key:
+        translator = deepl.Translator(auth_key=auth_key)
+    else:
+        translator = deepl.Translator(auth_key=os.getenv('DEEPL_API_KEY'))
     result = translator.translate_text(text, target_lang="JA")
     return result.text

@@ -24,6 +24,8 @@ sort_order = st.sidebar.selectbox(
 period = st.sidebar.slider(
     '期間を選択', 2000, 2024, (2000, 2024), 1
 )
+deepl_api_key = st.sidebar.text_input("DEEPL API KEY")
+
 query = st.text_input("キーワード")
 
 # submit_button = st.button("検索", key="submit")
@@ -42,7 +44,7 @@ with st.spinner("処理中..."):
             st.markdown('### abstracts:')
             st.markdown(results['abstracts'][i])
             if st.button("翻訳", key=f"abstract{n}"):
-                st.markdown(translate_en_to_ja(results['abstracts'][i]))
+                st.markdown(translate_en_to_ja(results['abstracts'][i]), deepl_api_key)
             st.markdown('---')
             n+=1
     # else:
