@@ -147,7 +147,7 @@ def summarize_v2(url, model="gpt-35-turbo"):
     # OpenAI APIを使用して要約チェーンを作成
     llm = AzureChatOpenAI(
         openai_api_version="2023-12-01-preview",
-        azure_deployment="gpt-35-turbo",
+        azure_deployment=model,
     )
     chain = load_summarize_chain(llm, chain_type="map_reduce", map_prompt=PROMPT, combine_prompt=PROMPT)
     # ベクターストアからドキュメントを取得
