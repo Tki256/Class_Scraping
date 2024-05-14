@@ -23,12 +23,13 @@ def search_cinii(query, sortorder=0, period=None, pagenum=1):
     titles = []
     links = []
     infos = []
+    quotes = []
     for element in elements:
         links.append(element.find('a', class_='taggedlink')['href'])
         titles.append(element.find('a', class_='taggedlink').get_text())
         infos.append(element.find('p', class_='item_data').get_text(strip=True) \
         .replace('\n', '').replace('\t', '').replace('                           ', ''))
-
+        quotes.append(element.find('span', class_='tag-cited').get_text(strip=True))
     abstracts = []
     for link in links:
         abstracts.append(get_abstract(link))
@@ -37,7 +38,8 @@ def search_cinii(query, sortorder=0, period=None, pagenum=1):
         'titles': titles,
         'links': links,
         'infos': infos,
-        'abstracts': abstracts
+        'abstracts': abstracts,
+        'quotes': quotes
     }
     return results
 
